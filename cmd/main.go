@@ -1,16 +1,28 @@
 package main
 
 import (
+	"github.com/gofiber/fiber/v2"
+	db2 "kraken/internal/db"
+	"kraken/internal/handlers"
+	"kraken/internal/repositories"
+	"kraken/internal/services"
 	"log"
-	"net/http"
 )
 
 func main() {
-	mux := http.NewServeMux()
+	db, err := db2.GetConnection("postgres", "example", "postgres", "localhost", 5432)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
 
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Hello World!"))
-	})
+	pr := repositories.NewPostgresRepo(db)
+	ts := services.NewTournamentService(pr)
+	tournamentHandlers := handlers.NewTournamentHandler(ts)
 
-	log.Fatal(http.ListenAndServe(":8080", mux))
+	app := fiber.New()
+
+	app.Get("/", tournamentHandlers.GetTournaments)
+
+	app.Listen(":3000")
 }
