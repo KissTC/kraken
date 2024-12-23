@@ -32,22 +32,13 @@ func (ts *TournamentService) CreateTournament(name, game string, startDate, endD
 		MaxPlayers: MaxPlayers,
 	}
 
-	fmt.Println(tournament)
-
-	t, err := ts.Tr.Create(context.Background(), tournament)
+	err := ts.Tr.Create(context.Background(), tournament)
 	if err != nil {
 		return nil, err
 	}
 
 	response := &responses.CreateTournamentResponse{
-		ID:         t.ID,
-		Name:       t.Name,
-		Game:       t.Game,
-		Status:     t.Status,
-		StartDate:  t.StartDate,
-		EndDate:    t.EndDate,
-		MaxPlayers: t.MaxPlayers,
-		CreatedAt:  time.Now(),
+		Response: fmt.Sprintf("Tournament created: %s", tournament.ID),
 	}
 
 	return response, nil

@@ -22,7 +22,8 @@ func main() {
 
 	app := fiber.New()
 
-	app.Get("/", tournamentHandlers.GetTournaments)
+	app.Get("/api/tournaments", tournamentHandlers.GetAll)
+	app.Post("/api/tournaments", tournamentHandlers.Create)
 
 	app.Listen(":3000")
 }
